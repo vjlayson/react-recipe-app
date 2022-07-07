@@ -5,20 +5,9 @@ import styled from "styled-components";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import {
-  Header,
-  AppNameComponent,
-  AppIcon,
-  SearchComponent,
-  SearchInput,
-} from "./components/Header";
-import {
-  RecipeCard,
-  CoverImage,
-  RecipeName,
-  IngredientsText,
-  FullRecipeText,
-} from "./components/Recipe";
+import DialogActions from '@mui/material/DialogActions';
+import Header from "./components/Header";
+import Recipe from "./components/Recipe";
 
 const APP_ID = "131a132a";
 const APP_KEY = "fc1d6869c9394cae1122b83b9cf471d2";
@@ -37,6 +26,11 @@ const AllRecipeContainer = styled.div`
   gap: 20px;
 `;
 
+const Placeholder = styled.img`
+width: 300px;
+height: 300px;
+`;
+
 const RecipeComponent = (props) => {
   // Slide In Alert Dialog
   const [open, setOpen] = React.useState(false);
@@ -46,34 +40,38 @@ const RecipeComponent = (props) => {
   return (
     <>
       <Dialog open={open}>
-        <DialogTitle>Dialog Title</DialogTitle>
+        <DialogTitle>Ingredients</DialogTitle>
         <DialogContent>
-          Dialog Content
-
           <table>
             <thead>
               <th>Ingredients</th>
               <th>Weight</th>
             </thead>
             <tbody>
-              <tr>
-                <td></td>
-                <td></td>
+              {recipeObj.ingredients.map((ingredientObj) => (
+                <tr>
+                <td>{ingredientObj.text}</td>
+                <td>{ingredientObj.weight}</td>
               </tr>
+              ))}
             </tbody>
           </table>
         </DialogContent>
+        <DialogActions>
+          <Recipe.IngredientsText onClick={() => window.open(recipeObj.url)}>See More</Recipe.IngredientsText>
+          <Recipe.FullRecipeText onClick={() => setOpen(false)}>Close</Recipe.FullRecipeText>
+        </DialogActions>
       </Dialog>
-      <RecipeCard>
-        <CoverImage src={recipeObj.image} />
-        <RecipeName>{recipeObj.label}</RecipeName>
-        <IngredientsText onClick={() => setOpen(true)}>
+      <Recipe.RecipeCard>
+        <Recipe.CoverImage src={recipeObj.image} />
+        <Recipe.RecipeName>{recipeObj.label}</Recipe.RecipeName>
+        <Recipe.IngredientsText onClick={() => setOpen(true)}>
           Ingredients
-        </IngredientsText>
-        <FullRecipeText onClick={() => window.open(recipeObj.url)}>
+        </Recipe.IngredientsText>
+        <Recipe.FullRecipeText onClick={() => window.open(recipeObj.url)}>
           See Full Recipe
-        </FullRecipeText>
-      </RecipeCard>
+        </Recipe.FullRecipeText>
+      </Recipe.RecipeCard>
     </>
   );
 };
@@ -99,21 +97,21 @@ function App() {
 
   return (
     <Container>
-      <Header>
-        <AppNameComponent>
-          <AppIcon src="/crab.svg" />
+      <Header.HeaderContainer>
+        <Header.AppNameComponent>
+          <Header.AppIcon src="/crab.svg" />
           Recipe App
-        </AppNameComponent>
-        <SearchComponent>
+        </Header.AppNameComponent>
+        <Header.SearchComponent>
           <img src="/search-icon.svg" alt="search-icon" />
-          <SearchInput placeholder="Type a recipe" onChange={onTextChange} />
-        </SearchComponent>
-      </Header>
+          <Header.SearchInput placeholder="Type a recipe" onChange={onTextChange} />
+        </Header.SearchComponent>
+      </Header.HeaderContainer>
       <AllRecipeContainer>
-        {recipeList.length &&
+        {recipeList.length ? 
           recipeList.map((recipeObj) => (
             <RecipeComponent recipeObj={recipeObj.recipe} />
-          ))}
+          )): <Placeholder src="welcome.svg" />}
       </AllRecipeContainer>
     </Container>
   );
